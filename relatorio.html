@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- ========================= METADADOS ========================= -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="autor" content="Petterson Barros">
+  <meta name="assunto" content="Página de relatório para registro de inspeçõe">
+  
+
+     <!-- TÍTULO E ÍCONE -->
+    <title>Relatório | Sistema UT</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="logo.png">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+    <header class="navbar navbar-dark bg-primary p-2 shadow-sm">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h5">Gestão de Atividades</span>
+    <a href="principal.html" class="btn btn-outline-light btn-sm">Voltar</a>
+  </div>
+</header>
+
+    <div class="container mt-4">
+        <h2 class="mb-4 titulo-preto">Inspeção por Ultrassom</h2>
+
+        <!-- FORMULÁRIO -->
+        <div class="card shadow p-4 mb-4">
+            <div class="row g-3">
+
+                <!-- CAMPO PEÇA -->
+                <div class="col-md-4">
+                    <label class="form-label">Peça / Componente</label>
+                    <input type="text" id="peca" class="form-control" placeholder="Ex.: Casca, Bordo,...">
+                </div>
+
+                <!-- CAMPO QUANTIDADE -->
+                <div class="col-md-2">
+                    <label class="form-label">Pontos</label>
+                    <input type="number" id="quantidade" class="form-control" min="1" value="1">
+                </div>
+
+                <!-- CAMPO HORÁRIO -->
+                <div class="col-md-3">
+                    <label class="form-label">Horário</label>
+                    <input type="time" id="horario" class="form-control">
+                </div>
+
+                <!-- CAMPO STATUS -->
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select id="status" class="form-select">
+                        <option value="Realizados">Realizados</option>
+                        <option value="Pendentes">Pendentes</option>
+                    </select>
+                </div>
+
+                <!-- CAMPO OBS -->
+                <div class="col-12">
+                    <label class="form-label">Observação</label>
+                    <textarea id="obs" rows="2" class="form-control" placeholder="Algum detalhe encontrado..."></textarea>
+                </div>
+
+                <!-- BOTÃO REGISTRAR -->
+                <div class="col-12 text-end">
+                    <button class="btn btn-primary mt-3" onclick="registrar()">Registrar Inspeção</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TABELA DE REGISTROS -->
+        <div class="card shadow p-3">
+            <h5 class="mb-3">Registros realizados</h5>
+
+            <!-- BOTÃO EXPORTAR PARA PDF -->
+            <button class="btn btn-success mb-3" onclick="exportarPDF()">📄 Exportar para PDF</button>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered" id="tabelaPDF">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Peça</th>
+                            <th>Qtd</th>
+                            <th>Horário</th>
+                            <th>Status</th>
+                            <th>Observação</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-registros"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================== SCRIPT PRINCIPAL ============================= -->
+    <script>
+        // Armazena os registros na memória
+        let registros = [];
+
+        // Auxiliar para saber se estamos editando
+        let editIndex = null;
+
+        /* -----------------------------------------------------
+           FUNÇÃO PARA REGISTRAR OU ATUALIZAR REGISTRO
+        ------------------------------------------------------ */
+        function registrar() {
+            const peca = document.getElementById("peca").value;
+            const qtd = document.getElementById("quantidade").value;
+            const horario = document.getElementById("horario").value;
+            const status = document.getElementById("status").value;
+            const obs = document.getElementById("obs").value;
+
+            if (peca.trim() === "" || horario.trim() === "") {
+                alert("Preencha o nome da peça e o horário!");
+                return;
+            }
+
+            const novo = { peca, qtd, horario, status, obs };
+
+            if (editIndex === null) {
+                // Se não há edição → adiciona
+                registros.push(novo);
+            } else {
+                // Atualiza registro existente
+                registros[editIndex] = novo;
+                editIndex = null;
+            }
+
+            atualizarTabela();
+            limparCampos();
+        }
+
+        /* -----------------------------------------------------
+           ATUALIZA TABELA NA TELA
+        ------------------------------------------------------ */
+        function atualizarTabela() {
+            const tabela = document.getElementById("tabela-registros");
+            tabela.innerHTML = "";
+
+            registros.forEach((item, index) => {
+                const classe = item.status === "Realizados" 
+                               ? "text-success fw-bold" 
+                               : "text-danger fw-bold";
+
+                const linha = document.createElement("tr");
+
+                linha.innerHTML = `
+                    <td>${item.peca}</td>
+                    <td>${item.qtd}</td>
+                    <td>${item.horario}</td>
+                    <td class="${classe}">${item.status}</td>
+                    <td>${item.obs}</td>
+
+                    <td class="text-center">
+
+                        <!-- BOTÃO EDITAR -->
+                        <button class="btn btn-warning btn-sm me-2"
+                            onclick="editarRegistro(${index})">
+                            ✏️ Editar
+                        </button>
+
+                        <!-- BOTÃO EXCLUIR -->
+                        <button class="btn btn-danger btn-sm"
+                            onclick="excluirRegistro(${index})">
+                            🗑️ Excluir
+                        </button>
+
+                    </td>
+                `;
+
+                tabela.appendChild(linha);
+            });
+        }
+
+        /* -----------------------------------------------------
+           FUNÇÃO PARA CARREGAR OS DADOS NO FORMULÁRIO
+        ------------------------------------------------------ */
+        function editarRegistro(index) {
+            const r = registros[index];
+
+            document.getElementById("peca").value = r.peca;
+            document.getElementById("quantidade").value = r.qtd;
+            document.getElementById("horario").value = r.horario;
+            document.getElementById("status").value = r.status;
+            document.getElementById("obs").value = r.obs;
+
+            editIndex = index;
+
+            // Rola para o topo para editar
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        /* -----------------------------------------------------
+           EXCLUIR REGISTRO
+        ------------------------------------------------------ */
+        function excluirRegistro(index) {
+            if (confirm("Deseja excluir este registro?")) {
+                registros.splice(index, 1);
+                atualizarTabela();
+            }
+        }
+
+        /* -----------------------------------------------------
+           LIMPAR CAMPOS
+        ------------------------------------------------------ */
+        function limparCampos() {
+            document.getElementById("peca").value = "";
+            document.getElementById("quantidade").value = "1";
+            document.getElementById("horario").value = "";
+            document.getElementById("status").value = "Realizados";
+            document.getElementById("obs").value = "";
+        }
+    </script>
+
+    <!-- ======================== EXPORTAR PARA PDF ============================= -->
+
+    <!-- jsPDF e AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        /* -----------------------------------------------------
+           GERAR PDF DA TABELA
+        ------------------------------------------------------ */
+        function exportarPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // TÍTULO
+            doc.setFontSize(16);
+            doc.text("Relatório de Inspeção por Ultrassom", 14, 15);
+
+            // GERAR TABELA
+            doc.autoTable({
+                startY: 25,
+                html: '#tabelaPDF',
+                theme: 'grid',
+                headStyles: { fillColor: [13, 110, 253] },
+                styles: { fontSize: 10 }
+            });
+
+            // SALVAR
+            doc.save("relatorio-ut.pdf");
+        }
+    </script>
+
+<!-- RODAPÉ -->
+    <footer class="text-center bg-primary text-white py-3 mt-auto">
+        <p class="mb-0">© 2025 Sistema Energy • Desenvolvido por Petterson Barros</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- ========================= METADADOS ========================= -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="autor" content="Petterson Barros">
+  <meta name="assunto" content="Página de cadastro do sistema UT">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="icon.png">
+
+     <!-- TÍTULO E ÍCONE -->
+  <title>Cadastro | Sistema UT</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="icon.png">
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="icon.png">
+
+  <style>
+    /* Labels em vermelho */
+    label {
+      color: red;
+      font-weight: 600;
+    }
+
+    /* Largura máxima do card responsivo */
+    .mw-420 {
+      max-width: 460px;
+    }
+  </style>
+</head>
+
+<body class="min-vh-100 d-flex flex-column">
+
+  <!-- ======================= CABEÇALHO ======================= -->
+  <nav class="navbar navbar-dark bg-primary shadow-sm">
+      <div class="container-fluid">
+          <span class="navbar-brand mb-0 h1">Área de Cadastro</span>
+      </div>
+  </nav>
+
+  <!-- ======================= CONTEÚDO ======================= -->
+  <main class=" card p-4 shadow-sm w-100 mw-420 mx-auto my-4" aria-labelledby="cadTitle">
+
+                <!------   Esse card contém tudo do cadastro.
+
+                  º card → estilo de cartão
+
+                  º p-4 → padding
+
+                  º shadow-sm → sombra leve
+
+                  º w-100 → usa toda a largura disponível
+
+                  º mw-420 → mas no máximo 420px
+
+                  º mx-auto → centraliza
+
+                  ºmy-4 → margem vertical  ---->
+
+
+      <h1 id="cadTitle" class="h2 text-center mb-3">Criar Conta</h1>
+      
+         <!-- NOME -->
+        <div class="mb-3">
+          <label for="nome" class="form-label">Nome completo</label>
+          <input id="nome" class="form-control" type="text" required placeholder="Digite seu nome">
+        </div>
+
+        <!-- EMAIL -->
+        <div class="mb-3">
+          <label for="email" class="form-label">E-mail</label>
+          <input id="email" class="form-control" type="email" required placeholder="exemplo@dominio.com">
+        </div>
+
+        <!-- USUÁRIO (SEM @) -->
+        <div class="mb-3">
+          <label for="usuario" class="form-label">Usuário</label>
+          <input id="usuario" class="form-control" type="text" required placeholder="Escolha um nome de usuário">
+        </div>
+
+        <!-- SENHA -->
+        <div class="mb-3">
+          <label for="senha" class="form-label">Senha (8 dígitos)</label>
+          <input id="senha" class="form-control" type="password" required minlength="8" maxlength="8" placeholder="8 dígitos">
+          <div class="form-text">A senha deve ter exatamente 8 caracteres.</div>
+        </div>
+
+        <!-- CONFIRMAR -->
+        <div class="mb-3">
+          <label for="confirma" class="form-label">Confirmar senha</label>
+          <input id="confirma" class="form-control" type="password" required minlength="8" maxlength="8" placeholder="Repita a senha">
+        </div>
+
+        <!-- BOTÕES -->
+        <a class="btn btn-primary w-100" href="login.html" onclick="this.form.submit; return false;">Cadastrar</a>
+        <a href="index.html" class="btn btn-outline-secondary w-100 mt-2">Voltar</a>
+
+      </form>
+  </main>
+
+  <!-- SCRIPT DO BANCO LOCAL -->
+  <script src="usuarios.js"></script>
+
+  <!-- ======================= RODAPÉ ======================= -->
+  <footer class="text-center bg-primary text-white py-3 mt-auto">
+      <p class="mb-0">© 2025 Sistema Energy • Desenvolvido por Petterson Barros</p>
+  </footer>
+
+</body>
+</html>

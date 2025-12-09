@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- ========================= METADADOS ========================= -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="autor" content="Petterson Barros">
+    <meta name="assunto" content="Essa é a página de login do sistema UT">
+
+     <!-- TÍTULO E ÍCONE -->
+    <title>Login | Sistema UT</title>
+    <link rel="icon" href="icon.png">
+
+    <!-- BOOTSTRAP -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Deixar os nomes em vermelho */
+        .label-red {
+            color: red;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body class="bg-light d-flex flex-column min-vh-100">
+
+    <!-- ======================= CABEÇALHO ======================= -->
+    <nav class="navbar navbar-dark bg-primary shadow-sm">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Área de Login</span>
+        </div>
+    </nav>
+
+    <!-- ======================= CONTEÚDO ======================= -->
+    <div class="d-flex justify-content-center align-items-center flex-grow-1 py-3">
+        <main class="bg-white shadow rounded p-4 w-100" style="max-width: 360px;">
+
+            <h2 class="text-center mb-2 fw-bold">Acesso ao Sistema</h2>
+            <p class="text-center text-muted mb-3">Entre com seu usuário e senha</p>
+
+            <form action="principal.html" method="GET">
+
+                <!-- EMAIL/USUÁRIO -->
+                <div class="mb-2">
+                    <label class="form-label label-red">E-mail (usuário)</label>
+                    <input 
+                        type="text"
+                        class="form-control"
+                        name="usuario"
+                        placeholder="ex: usuario@empresa.com"
+                        required
+                        pattern="^[^@]+@[^@]+\.com$"
+                        title="O usuário deve conter @ e terminar com .com">
+                </div>
+
+                <!-- SENHA -->
+                <div class="mb-2">
+                    <label class="form-label label-red">Senha</label>
+                    <input 
+                        type="password"
+                        class="form-control"
+                        name="senha"
+                        placeholder="Mínimo 8 caracteres"
+                        required
+                        pattern=".{8,}"
+                        title="A senha deve ter no mínimo 8 caracteres">
+                </div>
+
+                <!-- BOTÃO ENTRAR -->
+                <div class="d-grid mb-2">
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                </div>
+            </form>
+
+            <!-- BOTÕES FORA DO FORM -->
+            <a href="cadastro.html" class="btn btn-outline-primary w-100 mb-2">Criar Conta</a>
+            <a href="index.html" class="btn btn-outline-secondary w-100">Voltar</a>
+
+        </main>
+    </div>
+
+    <!-- RODAPÉ -->
+    <footer class="text-center bg-primary text-white py-3 mt-auto">
+        <p class="mb-0">© 2025 Sistema Energy • Desenvolvido por Petterson Barros</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>   
+</body>
+</html>

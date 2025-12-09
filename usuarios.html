@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- ========================= METADADOS  ========================= -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="autor" content="Petterson Barros">
+  <meta name="assunto" content="Página de usuários do sistema UT">
+  
+
+     <!-- TÍTULO e Icone-->  
+  <title>Usuários | Sistema UT</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="pag.png">
+
+    <!-- Bootstrap CSS -->
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+<header class="navbar navbar-dark bg-primary p-2 shadow-sm">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h5">Gestão de Usuários UT</span>
+    <a href="principal.html" class="btn btn-outline-light btn-sm">Voltar</a>
+  </div>
+</header>
+
+<main class="container my-4">
+
+  <div class="d-flex justify-content-between mb-3">
+    <h2 class="h6">Usuários cadastrados</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalUser" id="btnAddUser">
+      + Novo Usuário
+    </button>
+  </div>
+
+  <div class="card p-2">
+    <table class="table table-striped table-bordered mb-0" id="usersTable">
+      <thead class="table-light">
+        <tr>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Usuário</th>
+          <th class="text-center">Ações</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+</main>
+
+<!-- Modal -->
+<div class="modal fade" id="modalUser" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="formUser" class="p-3">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle">Novo usuário</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <input type="hidden" id="editIndex">
+
+          <label class="form-label">Nome completo</label>
+          <input id="uNome" class="form-control mb-2" required>
+
+          <label class="form-label">E-mail</label>
+          <input id="uEmail" type="email" class="form-control mb-2" required>
+
+          <label class="form-label">Usuário</label>
+          <input id="uUsuario" class="form-control mb-2" required>
+
+          <label class="form-label">Senha (8 dígitos)</label>
+          <input id="uSenha" type="password" minlength="8" maxlength="8" class="form-control mb-2" required>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ==================== JS REDUZIDO E EMBUTIDO ==================== -->
+<script>
+
+// ==========================
+// CARREGAR USUÁRIOS PADRÃO
+// OU DO LOCALSTORAGE
+// ==========================
+let usuarios = JSON.parse(localStorage.getItem("usuariosUT")) || [
+  { nome: "Carlos Oliveira", email: "carlos@energy.com", usuario: "carlos.ut", senha: "12345678" },
+  { nome: "Ana Santos", email: "ana@energy.com", usuario: "ana.ut", senha: "87654321" },
+  { nome: "Roberto Lima", email: "roberto@energy.com", usuario: "roberto.ut", senha: "11223344" }
+];
+
+// ==========================
+// SALVAR NO LOCALSTORAGE
+// ==========================
+function salvar() {
+  localStorage.setItem("usuariosUT", JSON.stringify(usuarios));
+}
+
+// ==========================
+// ATUALIZAR LISTA NA TABELA
+// ==========================
+function renderUsers() {
+  const tbody = document.querySelector("#usersTable tbody");
+  tbody.innerHTML = "";
+
+  usuarios.forEach((u, i) => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${u.nome}</td>
+        <td>${u.email}</td>
+        <td>${u.usuario}</td>
+        <td class="text-center">
+          <button class="btn btn-sm btn-outline-primary" onclick="editUser(${i})">Editar</button>
+          <button class="btn btn-sm btn-outline-danger" onclick="delUser(${i})">Excluir</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+// ==========================
+// EDITAR USUÁRIO
+// ==========================
+function editUser(i) {
+  const u = usuarios[i];
+
+  editIndex.value = i;
+  uNome.value = u.nome;
+  uEmail.value = u.email;
+  uUsuario.value = u.usuario;
+  uSenha.value = u.senha;
+
+  modalTitle.textContent = "Editar usuário";
+  modal.show();
+}
+
+// ==========================
+// EXCLUIR USUÁRIO
+// ==========================
+function delUser(i) {
+  if (!confirm("Deseja excluir este usuário?")) return;
+
+  usuarios.splice(i, 1);
+  salvar();
+  renderUsers();
+}
+
+// ==========================
+// CONFIGURAR MODAL
+// ==========================
+const modal = new bootstrap.Modal(document.getElementById("modalUser"));
+
+// Abrir modal para criar novo usuário
+btnAddUser.onclick = () => {
+  formUser.reset();
+  editIndex.value = "";
+  modalTitle.textContent = "Novo usuário";
+};
+
+// ==========================
+// SALVAR (CRIAR OU EDITAR)
+// ==========================
+formUser.onsubmit = e => {
+  e.preventDefault();
+
+  const user = {
+    nome: uNome.value.trim(),
+    email: uEmail.value.trim(),
+    usuario: uUsuario.value.trim(),
+    senha: uSenha.value
+  };
+
+  // Criar
+  if (editIndex.value === "") {
+    usuarios.push(user);
+
+  // Editar
+  } else {
+    usuarios[editIndex.value] = user;
+  }
+
+  salvar();
+  modal.hide();
+  renderUsers();
+};
+
+// ==========================
+// INICIAR TABELA
+// ==========================
+renderUsers();
+
+</script>
+
+ <!-- RODAPÉ -->
+    <footer class="text-center bg-primary text-white py-3 mt-auto">
+        <p class="mb-0">© 2025 Sistema Energy • Desenvolvido por Petterson Barros</p>
+    </footer>
+
+</body>
+</html>
